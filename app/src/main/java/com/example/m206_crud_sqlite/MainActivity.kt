@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 
+data class Computer(val id: Int, val nom: String, val prix: Double, val imageURL: String)
 class MainActivity : AppCompatActivity() {
 
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
 
         val addButton = findViewById<Button>(R.id.buttonAdd)
+        val searchButton = findViewById<Button>(R.id.buttonSearch)
+
         val editTextId = findViewById<EditText>(R.id.editTextId)
         val editTextNom = findViewById<EditText>(R.id.editTextName)
         val editTextPrix = findViewById<EditText>(R.id.editTextPrice)
@@ -43,6 +46,53 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Ordi non ajouté",Toast.LENGTH_LONG).show()
 
             }
+        }
+
+        searchButton.setOnClickListener {
+
+            val maDB = DB(applicationContext)
+
+            val stringID = editTextId.text.toString()
+
+            if(stringID.equals("")) {
+                Toast.makeText(applicationContext,"ID obligatoire",Toast.LENGTH_LONG).show()
+
+            }
+            else {
+                val id = stringID.toIntOrNull()
+                if(id!=null) {
+                    val foundComputer = maDB.searchById(id)
+                    if (foundComputer == null) {
+                        Toast.makeText(applicationContext, "aucun ordi trouvé", Toast.LENGTH_LONG)
+                            .show()
+
+                    } else {
+
+                        editTextNom.setText(foundComputer.nom)
+                        editTextPrix.setText(foundComputer.prix.toString())
+                        editTextImageURL.setText(foundComputer.imageURL)
+
+                        val newList = ArrayList<Computer>()
+
+                        newList.add(foundComputer)
+
+                        val computerAdapter = ComputerAdapter(this, newList)
+
+                        findViewById<ListView>(R.id.listView).adapter = computerAdapter
+
+                    }
+                }
+
+                else {
+                    Toast.makeText(applicationContext, "Entrer un nombre", Toast.LENGTH_LONG).show()
+
+                }
+
+            }
+
+
+
+
         }
 
 

@@ -2,6 +2,7 @@ package com.example.m206_crud_sqlite
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
@@ -56,7 +57,31 @@ class DB(context: Context) : SQLiteOpenHelper(context, "db_computers", null, 1) 
         return computersList
     }
 
+    fun searchById(id: Int): Computer? {
+        val db = this.readableDatabase
+        val cursor: Cursor?
+        var computer : Computer? = null
+        try {
+            val query =
+                "SELECT nom, prix, imageURL FROM computers WHERE id = ?"
+            cursor = db.rawQuery(query, arrayOf(id.toString()))
+            cursor.moveToFirst()
+
+            if (cursor.count > 0) {
+                val name = cursor.getString(cursor.getColumnIndex("nom"))
+                val price = cursor.getDouble(cursor.getColumnIndex("prix"))
+                val imageURL = cursor.getString(cursor.getColumnIndex("imageURL"))
+
+                computer = Computer(id,name, price, imageURL)
+            }
+        } catch (e: Exception) {
+
+        }
+        db.close()
+        return computer
+
+    }
+
 
 }
 
-data class Computer(val id: Int, val nom: String, val prix: Double, val imageURL: String)
