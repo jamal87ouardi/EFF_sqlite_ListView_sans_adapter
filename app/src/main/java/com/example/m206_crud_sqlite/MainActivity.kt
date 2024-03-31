@@ -2,6 +2,7 @@ package com.example.m206_crud_sqlite
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
@@ -72,13 +73,16 @@ class MainActivity : AppCompatActivity() {
                         editTextPrix.setText(foundComputer.prix.toString())
                         editTextImageURL.setText(foundComputer.imageURL)
 
-                        val newList = ArrayList<Computer>()
+                        val newList = ArrayList<String>()
 
-                        newList.add(foundComputer)
+                        val displayed = foundComputer.nom+" - "+foundComputer.prix+" dh"
 
-                        val computerAdapter = ComputerAdapter(this, newList)
+                        newList.add(displayed)
 
-                        findViewById<ListView>(R.id.listView).adapter = computerAdapter
+                        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, newList)
+
+
+                        findViewById<ListView>(R.id.listView).adapter = adapter
 
                     }
                 }
@@ -110,11 +114,22 @@ class MainActivity : AppCompatActivity() {
 
         val myListView = findViewById<ListView>(R.id.listView)
 
-        val listeOrdinateurs = maDB.getAll()
+        val list1 = maDB.getAll()
 
-        val computerAdapter = ComputerAdapter(this, listeOrdinateurs)
+        val list2 = ArrayList<String>()
 
-        myListView.adapter = computerAdapter
+        var displayed=""
+
+        for(i in 0..list1.size-1) {
+
+            displayed = list1[i].nom + " - "+list1[i].prix+" dh"
+
+            list2.add(displayed)
+        }
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, list2)
+
+        myListView.adapter = adapter
 
     }
 }
